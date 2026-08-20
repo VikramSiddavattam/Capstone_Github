@@ -24,9 +24,11 @@ keeping the MVP simple and easy to reason about.
 
 2. **Fetcher**
    - Resolves URL inputs via an HTTP client (`requests`).
+   - Accepts only syntactically valid `http` and `https` URLs.
    - Follows standard HTTP redirects automatically and captures the final resolved URL.
-   - Applies timeouts and marks a URL unavailable only when the final destination
-     cannot be reached or returns an error.
+   - Limits the number of redirects and applies explicit connect/read timeouts.
+   - Marks a URL unavailable only when the final destination cannot be reached or
+     returns an error.
    - Fetches directly linked CSS resources (`<link rel="stylesheet">`) referenced in
      the HTML, when reachable.
 
@@ -55,8 +57,9 @@ keeping the MVP simple and easy to reason about.
    - Checks uniqueness (match count) against the complete analyzed DOM.
    - Applies fixed base scores (id 100, name 90, data-testid 85, CSS 75, XPath 65),
      prefers unique locators, and marks non-unique ones accordingly.
-   - Prefers shorter/stable CSS selectors and avoids volatile class names where
-     possible; uses XPath only as a last-resort fallback.
+   - Generates deterministic CSS candidates, preferring stable attributes and the
+     shortest unique selector while avoiding volatile class names where possible.
+     Uses structural selectors and XPath only as fallbacks.
    - Selects and reports a single preferred locator per element (no alternatives).
 
 7. **Technology Stack Detector**
@@ -72,6 +75,8 @@ keeping the MVP simple and easy to reason about.
      table of extracted elements with their metadata.
    - Clearly flags missing metadata, unavailable URLs, no matching elements, and
      non-unique locators.
+   - HTML-escapes all analyzed values through template autoescaping; analyzed page
+     content is never rendered as trusted HTML.
 
 ## 3. Data Flow
 
@@ -129,7 +134,23 @@ state is persisted.
    numeric requirement.
 6. Cross-domain iframe content is not analyzed.
 
-## 6. Risks, Gaps, and Trade-offs
+7. Static visibility uses only reliable HTML/CSS cues such as `hidden`,
+  `aria-hidden="true"`, `display:none`, and `visibility:hidden`; layout-dependent
+  visibility is not inferred.
+8. The selected CSS parser and direct dependency versions shall be fixed before
+  implementation for reproducible local setup.
+
+## 6. MVP Review Decisions
+
+This is a local/demo MVP. The implementation shall include basic URL validation,
+a fixed redirect limit, explicit request timeouts, deterministic locator generation,
+and safe HTML encoding in the report.
+
+SSRF protection, advanced resource controls, rate limiting, production observability,
+authentication, background processing, and other deployment hardening are deferred
+to a future release.
+
+## 7. Risks, Gaps, and Trade-offs
 
 - **Style accuracy**: Without a full CSS cascade/inheritance engine, some computed
   styles may be approximated or reported as `Not available`. Acceptable for the MVP
