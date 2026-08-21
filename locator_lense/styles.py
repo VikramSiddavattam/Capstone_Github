@@ -17,18 +17,18 @@ STYLE_PROPERTIES = {
 @dataclass(frozen=True)
 class StyleRule:
     selector: str
-    declarations: dict[str, str]
+    declarations: dict[str, tuple[str, bool]]
     order: int
 
 
-def _declarations(css: str) -> dict[str, str]:
-    result: dict[str, str] = {}
+def _declarations(css: str) -> dict[str, tuple[str, bool]]:
+    result: dict[str, tuple[str, bool]] = {}
     for token in tinycss2.parse_declaration_list(css, skip_whitespace=True, skip_comments=True):
-        if token.type != "declaration" or token.name not in STYLE_PROPERTIES or token.important:
+        if token.type != "declaration" or token.name not in STYLE_PROPERTIES:
             continue
         value = normalize_text(tinycss2.serialize(token.value))
         if value:
-            result[token.name] = value
+            result[token.name] = (value, token.important)
     return result
 
 
@@ -54,7 +54,7 @@ def resolve_styles(tag: Tag, soup: BeautifulSoup, linked_css: dict[str, str] | N
         rules.extend(parse_rules(style.get_text()))
     for css in (linked_css or {}).values():
         rules.extend(parse_rules(css))
-    selected: dict[str, tuple[tuple[int, int, int], int, str]] = {}
+    selected: dict[str, tuple[bool, tuple[int, int, int], int, str]] = {}
     for rule in rules:
         try:
             matches = soup.select(rule.selector)
@@ -63,11 +63,14 @@ def resolve_styles(tag: Tag, soup: BeautifulSoup, linked_css: dict[str, str] | N
         if tag not in matches:
             continue
         rank = (_specificity(rule.selector), rule.order)
-        for property_name, value in rule.declarations.items():
+        for property_name, (value, important) in rule.declarations.items():
             current = selected.get(property_name)
-            if current is None or rank >= (current[0], current[1]):
-                selected[property_name] = (rank[0], rank[1], value)
+            if current is None or (important, rank[0], rank[1]) >= (current[0], current[1], current[2]):
+                selected[property_name] = (important, rank[0], rank[1], value)
     inline = _declarations(str(tag.get("style", "")))
-    for property_name, value in inline.items():
-        selected[property_name] = ((10_000, 0, 0), 10_000, value)
-    return {STYLE_PROPERTIES[name]: selected[name][2] for name in STYLE_PROPERTIES if name in selected}
+    for property_name, (value, important) in inline.items():
+        current = selected.get(property_name)
+        inline_rank = (10_000, 0, 0)
+        if current is None or (important, inline_rank, 10_000) >= (current[0], current[1], current[2]):
+            selected[property_name] = (important, inline_rank, 10_000, value)
+    return {STYLE_PROPERTIES[name]: selected[name][3] for name in STYLE_PROPERTIES if name in selected}

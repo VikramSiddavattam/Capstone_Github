@@ -2,6 +2,7 @@
 
 import re
 from dataclasses import dataclass
+
 from bs4 import BeautifulSoup, Tag
 from lxml import html as lxml_html
 
@@ -27,15 +28,6 @@ def _css_quote(value: str) -> str:
 
 def _is_stable_class(value: str) -> bool:
     return not re.search(r"(^|[-_])(css|sc|jsx|ng|ember|hash)[-_]?[a-z0-9]{4,}$", value.lower())
-
-
-def _xpath_literal(value: str) -> str:
-    if "'" not in value:
-        return f"'{value}'"
-    if '"' not in value:
-        return f'"{value}"'
-    parts = value.split("'")
-    return "concat(" + ", \"'\", ".join(f"'{part}'" for part in parts) + ")"
 
 
 def _element_xpath(tag: Tag) -> str:
@@ -74,7 +66,8 @@ def _element_css_path(tag: Tag) -> str:
         part = current.name
         siblings = [sibling for sibling in current.parent.find_all(current.name, recursive=False)] if isinstance(current.parent, Tag) else []
         if len(siblings) > 1:
-            part += f":nth-of-type({siblings.index(current) + 1})"
+            position = next(index for index, sibling in enumerate(siblings, 1) if sibling is current)
+            part += f":nth-of-type({position})"
         parts.append(part)
         parent = current.parent
         current = parent if isinstance(parent, Tag) else None
@@ -83,7 +76,10 @@ def _element_css_path(tag: Tag) -> str:
 
 def _match_count(soup: BeautifulSoup, locator_type: str, locator: str) -> int:
     if locator_type == "id":
-        return len(soup.find_all(id=locator.removeprefix("#")))
+        try:
+            return len(soup.select(locator))
+        except Exception:
+            return 0
     if locator_type in {"name", "data-testid"}:
         value = locator.split("=", 1)[1].rsplit("]", 1)[0].strip('"')
         return len(soup.find_all(attrs={locator_type: value}))

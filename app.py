@@ -2,7 +2,7 @@
 
 from flask import Flask, render_template, request
 
-from locator_lense.extractor import extract_element_tags, extract_elements
+from locator_lense.extractor import extract_element_pairs
 from locator_lense.fetcher import Fetcher
 from locator_lense.locators import generate_locator
 from locator_lense.models import AnalysisResult, ElementRecord
@@ -15,8 +15,7 @@ def analyze_html(html: str, final_url: str | None = None, fetcher: Fetcher | Non
     soup = parse_html(html)
     linked_css = fetcher.fetch_linked_stylesheets(html, final_url) if fetcher and final_url else {}
     elements: list[ElementRecord] = []
-    tags = extract_element_tags(soup)
-    for tag, record in zip(tags, extract_elements(soup)):
+    for tag, record in extract_element_pairs(soup):
         locator = generate_locator(tag, soup)
         styles = resolve_styles(tag, soup, linked_css)
         elements.append(
@@ -75,4 +74,4 @@ app = create_app()
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False)

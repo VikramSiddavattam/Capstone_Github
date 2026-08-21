@@ -34,6 +34,14 @@ def test_style_resolver_prefers_inline_over_embedded_css():
     assert styles["font_size"] == "12px"
 
 
+def test_style_resolver_honors_important_declarations():
+    soup = parse_html('<style>button { color: red !important; }</style><button style="color: blue">Save</button>')
+
+    styles = resolve_styles(soup.select_one("button"), soup)
+
+    assert styles["color"] == "red"
+
+
 def test_technology_detector_returns_not_detected_or_signature():
     assert detect_technology(parse_html("<html></html>")) == "Not detected"
     assert detect_technology(parse_html('<meta name="generator" content="DemoCMS">')) == "DemoCMS"

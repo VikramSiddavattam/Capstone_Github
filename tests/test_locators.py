@@ -1,3 +1,4 @@
+import locator_lense.locators as locators
 from locator_lense.locators import generate_locator
 from locator_lense.parser import parse_html
 
@@ -51,3 +52,33 @@ def test_xpath_fallback_has_a_real_dom_match_count():
     result = generate_locator(soup.select("span")[1], soup)
 
     assert result.match_count == 1
+
+
+def test_special_character_id_keeps_id_priority():
+    soup = parse_html('<button id="a:b">Save</button>')
+
+    result = generate_locator(soup.find("button"), soup)
+
+    assert result.locator_type == "id"
+    assert result.match_count == 1
+    assert result.score == 100
+
+
+def test_identical_siblings_get_the_targeting_css_position():
+    soup = parse_html("<div><span>Same</span><span>Same</span></div>")
+
+    result = generate_locator(soup.find_all("span")[1], soup)
+
+    assert result.locator == "html > body > div > span:nth-of-type(2)"
+    assert soup.select(result.locator)[0] is soup.find_all("span")[1]
+
+
+def test_xpath_is_used_when_css_candidates_are_unavailable(monkeypatch):
+    soup = parse_html('<button>Save</button>')
+    monkeypatch.setattr(locators, "_css_candidates", lambda tag: [])
+
+    result = generate_locator(soup.find("button"), soup)
+
+    assert result.locator_type == "XPath"
+    assert result.match_count == 1
+    assert result.score == 65

@@ -1,7 +1,6 @@
 """Static DOM element extraction rules."""
 
 import re
-from collections.abc import Iterable
 
 from bs4 import BeautifulSoup, Tag
 
@@ -80,17 +79,24 @@ def extract_element_tags(soup: BeautifulSoup) -> list[Tag]:
     return [tag for tag in soup.find_all(True) if _category(tag) is not None and is_visible(tag)]
 
 
-def extract_elements(soup: BeautifulSoup) -> list[ElementRecord]:
-    records: list[ElementRecord] = []
+def extract_element_pairs(soup: BeautifulSoup) -> list[tuple[Tag, ElementRecord]]:
+    pairs: list[tuple[Tag, ElementRecord]] = []
     for tag in extract_element_tags(soup):
         category = _category(tag)
         assert category is not None
-        records.append(
-            ElementRecord(
-                category=category,
-                text=normalize_text(tag.get_text(" ", strip=False)),
-                tag_name=tag.name,
-                attributes=_attributes(tag),
+        pairs.append(
+            (
+                tag,
+                ElementRecord(
+                    category=category,
+                    text=normalize_text(tag.get_text(" ", strip=False)),
+                    tag_name=tag.name,
+                    attributes=_attributes(tag),
+                ),
             )
         )
-    return records
+    return pairs
+
+
+def extract_elements(soup: BeautifulSoup) -> list[ElementRecord]:
+    return [record for _, record in extract_element_pairs(soup)]
