@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Locator Lense Report</title>
+  <style>body { font-family: sans-serif; margin: 2rem; } table { border-collapse: collapse; width: 100%; } th, td { border: 1px solid #ccc; padding: .5rem; text-align: left; vertical-align: top; } .error { color: #a00; }</style>
+</head>
+<body>
+  <header><h1>Locator Lense</h1></header>
+  {% if result.error %}<p class="error">{{ result.error }}</p>{% endif %}
+  <section aria-label="Page information">
+    <p><strong>Title:</strong> {{ result.title }}</p>
+    <p><strong>Final URL:</strong> {{ result.final_url or 'Not available' }}</p>
+    <p><strong>Technology:</strong> {{ result.technology }}</p>
+  </section>
+  {% if result.elements %}
+  <table>
+    <thead><tr><th>Category</th><th>Text</th><th>Tag</th><th>Locator</th><th>Type</th><th>Matches</th><th>Score</th><th>Styles</th><th>Attributes</th></tr></thead>
+    <tbody>
+    {% for element in result.elements %}
+      <tr>
+        <td>{{ element.category }}</td>
+        <td>{{ element.text }}</td>
+        <td>{{ element.tag_name }}</td>
+        <td>{{ element.locator }}{% if element.uniqueness %} ({{ element.uniqueness }}){% endif %}</td>
+        <td>{{ element.locator_type }}</td>
+        <td>{{ element.match_count }}</td>
+        <td>{{ element.score }}</td>
+        <td>font-family: {{ element.styles.get('font_family', 'Not available') }}<br>font-size: {{ element.styles.get('font_size', 'Not available') }}<br>color: {{ element.styles.get('color', 'Not available') }}</td>
+        <td>{% for name, value in element.attributes.items() %}<div>{{ name }}={{ value }}</div>{% else %}Not available{% endfor %}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}<p>No matching visible elements found.</p>{% endif %}
+</body>
+</html>
