@@ -25,25 +25,34 @@ def test_unique_name_beats_non_unique_id():
     assert result.score == 90
 
 
-def test_unique_css_beats_non_unique_attributes():
+def test_unique_xpath_beats_non_unique_attributes():
     soup = parse_html('<button id="duplicate" name="action">A</button><button id="duplicate" name="action">B</button>')
 
     result = generate_locator(soup.select("button")[0], soup)
 
-    assert result.locator_type == "CSS Selector"
+    assert result.locator_type == "XPath"
     assert result.match_count == 1
-    assert result.score == 75
+    assert result.score == 65
     assert result.uniqueness == ""
 
 
-def test_css_selector_is_unique_when_attributes_are_missing():
+def test_xpath_is_unique_when_attributes_are_missing():
     soup = parse_html('<div><span>One</span><span>Two</span></div>')
 
     result = generate_locator(soup.select("span")[1], soup)
 
-    assert result.locator_type == "CSS Selector"
+    assert result.locator_type == "XPath"
     assert result.match_count == 1
-    assert result.score == 75
+    assert result.score == 65
+
+
+def test_xpath_is_preferred_over_css_when_both_are_unique():
+    soup = parse_html('<div><span>One</span><span>Two</span></div>')
+
+    result = generate_locator(soup.select("span")[1], soup)
+
+    assert result.locator_type == "XPath"
+    assert result.score == 65
 
 
 def test_xpath_fallback_has_a_real_dom_match_count():
@@ -64,13 +73,13 @@ def test_special_character_id_keeps_id_priority():
     assert result.score == 100
 
 
-def test_identical_siblings_get_the_targeting_css_position():
+def test_identical_siblings_get_the_targeting_xpath_position():
     soup = parse_html("<div><span>Same</span><span>Same</span></div>")
 
     result = generate_locator(soup.find_all("span")[1], soup)
 
-    assert result.locator == "html > body > div > span:nth-of-type(2)"
-    assert soup.select(result.locator)[0] is soup.find_all("span")[1]
+    assert result.locator == "/html[1]/body[1]/div[1]/span[2]"
+    assert result.locator_type == "XPath"
 
 
 def test_xpath_is_used_when_css_candidates_are_unavailable(monkeypatch):

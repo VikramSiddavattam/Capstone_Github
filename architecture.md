@@ -53,13 +53,13 @@ keeping the MVP simple and easy to reason about.
 
 6. **Locator Generator**
    - Computes candidate locators per element: `id`, `name`, `data-testid`,
-     CSS Selector, XPath, in that preference order.
+     XPath, CSS Selector, in that preference order.
    - Checks uniqueness (match count) against the complete analyzed DOM.
    - Applies fixed base scores (id 100, name 90, data-testid 85, CSS 75, XPath 65),
      prefers unique locators, and marks non-unique ones accordingly.
    - Generates deterministic CSS candidates, preferring stable attributes and the
      shortest unique selector while avoiding volatile class names where possible.
-     Uses structural selectors and XPath only as fallbacks.
+    Uses XPath before CSS structural selectors as the preferred fallback.
    - Selects and reports a single preferred locator per element (no alternatives).
 
 7. **Technology Stack Detector**

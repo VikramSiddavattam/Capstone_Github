@@ -86,16 +86,17 @@ The generator evaluates locators in this priority order:
 1. `id` - score `100`.
 2. `name` - score `90`.
 3. `data-testid` - score `85`.
-4. CSS Selector - score `75`.
-5. XPath - score `65`.
+4. XPath - score `65`.
+5. CSS Selector - score `75`.
 
 Unique locators are always preferred. If no unique locator exists, the generator
 selects the highest-priority locator type and then the candidate with the lowest
 match count within that type. Non-unique selections retain their base score and are
 marked `Non-Unique` in the report.
 
-CSS selectors prefer stable attributes and short unique structural selectors while
-avoiding volatile class names where possible. XPath is used only as a final fallback.
+XPath is preferred over CSS when both are unique. CSS selectors remain available as
+the final fallback and prefer stable attributes and short structural selectors while
+avoiding volatile class names where possible.
 
 ## Static Analysis Limitations
 

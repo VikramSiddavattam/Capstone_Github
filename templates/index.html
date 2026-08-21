@@ -1,16 +1,58 @@
 <!doctype html>
 <html lang="en">
-<head><meta charset="utf-8"><title>Locator Lense</title></head>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Locator Lense</title>
+  <style>
+    :root { color-scheme: light; --ink: #17324d; --muted: #60758a; --paper: #f5f8fc; --panel: #fff; --line: #d8e3ee; --blue: #2369aa; --teal: #168f8a; --coral: #df6b52; }
+    * { box-sizing: border-box; }
+    body { background: radial-gradient(circle at 90% 0%, #d8f1ed 0, transparent 32%), linear-gradient(145deg, #f5f8fc 0%, #edf4f8 100%); color: var(--ink); font-family: "Segoe UI", sans-serif; margin: 0; min-height: 100vh; }
+    .topbar { background: linear-gradient(120deg, #17324d, #2369aa 60%, #168f8a); color: #fff; padding: 1rem max(1.25rem, 7vw); }
+    .brand { font-size: .82rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+    main { margin: 0 auto; max-width: 1080px; padding: 4.5rem 1.25rem 5rem; }
+    .intro { max-width: 720px; }
+    .eyebrow { color: var(--teal); font-size: .78rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+    h1 { font-size: clamp(2.4rem, 7vw, 5.2rem); letter-spacing: -.04em; line-height: .98; margin: .7rem 0 1rem; }
+    .lede { color: var(--muted); font-size: 1.1rem; line-height: 1.6; margin: 0; max-width: 620px; }
+    .analysis-panel { background: var(--panel); border: 1px solid var(--line); border-top: 5px solid var(--coral); box-shadow: 0 18px 45px #17324d18; margin-top: 2.5rem; padding: clamp(1.25rem, 4vw, 2.25rem); }
+    .panel-heading { align-items: baseline; display: flex; gap: .8rem; justify-content: space-between; margin-bottom: 1.4rem; }
+    h2 { font-size: 1.35rem; margin: 0; }
+    .hint { color: var(--muted); font-size: .85rem; }
+    .field-grid { display: grid; gap: 1.25rem; grid-template-columns: 1fr 1fr; }
+    .field { display: flex; flex-direction: column; gap: .5rem; }
+    label { font-size: .9rem; font-weight: 750; }
+    input, textarea { background: #fbfdff; border: 1px solid var(--line); border-radius: 8px; color: var(--ink); font: inherit; padding: .85rem .95rem; transition: border-color .15s, box-shadow .15s; }
+    input:focus, textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 3px #2369aa22; outline: none; }
+    textarea { min-height: 220px; resize: vertical; }
+    .divider { align-items: center; color: var(--muted); display: flex; gap: .8rem; justify-content: center; padding: 1.25rem 0 0; }
+    .divider::before, .divider::after { background: var(--line); content: ""; height: 1px; width: 100%; }
+    .actions { align-items: center; display: flex; gap: 1rem; justify-content: space-between; margin-top: 1.5rem; }
+    .scope { color: var(--muted); font-size: .82rem; }
+    button { background: linear-gradient(120deg, var(--coral), #ef9361); border: 0; border-radius: 8px; box-shadow: 0 8px 18px #df6b5238; color: #fff; cursor: pointer; font: inherit; font-weight: 800; padding: .9rem 1.35rem; }
+    button:hover { filter: brightness(1.05); transform: translateY(-1px); }
+    @media (max-width: 720px) { main { padding-top: 3rem; } .field-grid { grid-template-columns: 1fr; } .panel-heading, .actions { align-items: flex-start; flex-direction: column; } button { width: 100%; } }
+  </style>
+</head>
 <body>
+  <div class="topbar"><div class="brand">Locator Lense / Static DOM intelligence</div></div>
   <main>
-    <h1>Locator Lense</h1>
+    <section class="intro">
+      <div class="eyebrow">Inspect. Locate. Report.</div>
+      <h1>Find the elements worth testing.</h1>
+      <p class="lede">Analyze a page's server-delivered HTML and turn its visible structure into stable, readable locators.</p>
+    </section>
+    <section class="analysis-panel" aria-labelledby="analysis-title">
+      <div class="panel-heading"><h2 id="analysis-title">Start an analysis</h2><span class="hint">Choose one input source</span></div>
     <form method="post" action="/analyze">
-      <label for="url">Webpage URL</label>
-      <input id="url" name="url" type="url" placeholder="https://example.com">
-      <label for="raw_html">Raw HTML</label>
-      <textarea id="raw_html" name="raw_html" rows="12"></textarea>
-      <button type="submit">Analyze HTML</button>
+      <div class="field-grid">
+        <div class="field"><label for="url">Webpage URL</label><input id="url" name="url" type="url" placeholder="https://example.com"></div>
+        <div class="field"><label for="raw_html">Raw HTML</label><textarea id="raw_html" name="raw_html" placeholder="Paste server-delivered HTML here..."></textarea></div>
+      </div>
+      <div class="divider">or</div>
+      <div class="actions"><span class="scope">Static HTML only · no JavaScript execution</span><button type="submit">Analyze HTML</button></div>
     </form>
+    </section>
   </main>
 </body>
 </html>

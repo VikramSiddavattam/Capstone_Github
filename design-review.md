@@ -24,7 +24,7 @@ Reviewed `architecture.md` against the approved MVP requirements and evaluated r
 
 - **Finding:** The architecture states the locator preference and scores but does not define deterministic candidate selection.
 - **Impact:** The same HTML could produce different locators across runs or implementations.
-- **Recommendation:** Evaluate candidates in the fixed order `id`, `name`, `data-testid`, CSS Selector, XPath; calculate match counts against the complete DOM; always prefer unique candidates; for non-unique candidates prefer the lowest match count within the highest-priority type; use deterministic tie-breaking and report only the selected locator.
+- **Recommendation:** Evaluate candidates in the fixed order `id`, `name`, `data-testid`, XPath, CSS Selector; calculate match counts against the complete DOM; always prefer unique candidates; for non-unique candidates prefer the lowest match count within the highest-priority type; use deterministic tie-breaking and report only the selected locator.
 - **Decision:** Required for the local/demo MVP.
 
 ### 4. CSS selector stability

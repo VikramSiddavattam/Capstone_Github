@@ -105,8 +105,8 @@ def _candidate_pairs(tag: Tag) -> list[tuple[str, str]]:
         pairs.append(("name", f"[name={_css_quote(str(tag['name']))}]"))
     if tag.get("data-testid"):
         pairs.append(("data-testid", f"[data-testid={_css_quote(str(tag['data-testid']))}]"))
-    pairs.extend(("CSS Selector", candidate) for candidate in _css_candidates(tag))
     pairs.append(("XPath", _element_xpath(tag)))
+    pairs.extend(("CSS Selector", candidate) for candidate in _css_candidates(tag))
     return pairs
 
 

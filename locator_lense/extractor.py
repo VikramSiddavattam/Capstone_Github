@@ -45,6 +45,10 @@ def is_visible(tag: Tag) -> bool:
     return True
 
 
+def _is_analyzable_tag(tag: Tag) -> bool:
+    return tag.name not in {"script", "style", "template", "head", "title"}
+
+
 def _category(tag: Tag) -> str | None:
     tag_name = tag.name.lower()
     role = str(tag.get("role", "")).lower()
@@ -76,7 +80,11 @@ def _attributes(tag: Tag) -> dict[str, str]:
 
 
 def extract_element_tags(soup: BeautifulSoup) -> list[Tag]:
-    return [tag for tag in soup.find_all(True) if _category(tag) is not None and is_visible(tag)]
+    return [
+        tag
+        for tag in soup.find_all(True)
+        if _is_analyzable_tag(tag) and _category(tag) is not None and is_visible(tag)
+    ]
 
 
 def extract_element_pairs(soup: BeautifulSoup) -> list[tuple[Tag, ElementRecord]]:

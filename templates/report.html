@@ -3,17 +3,38 @@
 <head>
   <meta charset="utf-8">
   <title>Locator Lense Report</title>
-  <style>body { font-family: sans-serif; margin: 2rem; } table { border-collapse: collapse; width: 100%; } th, td { border: 1px solid #ccc; padding: .5rem; text-align: left; vertical-align: top; } .error { color: #a00; }</style>
+  <style>
+    :root { color-scheme: light; --ink: #17324d; --muted: #5d7185; --paper: #f6f8fb; --panel: #ffffff; --line: #d9e3ee; --blue: #2268a8; --teal: #168f8a; --coral: #df6b52; }
+    * { box-sizing: border-box; }
+    body { background: var(--paper); color: var(--ink); font-family: "Segoe UI", sans-serif; margin: 0; }
+    header { background: linear-gradient(120deg, #17324d, #2268a8 58%, #168f8a); color: #fff; padding: 2.5rem max(1.25rem, 5vw) 2rem; }
+    header h1 { letter-spacing: .02em; margin: 0 0 .4rem; }
+    header p { color: #dcecf5; margin: 0; }
+    main { margin: 1.5rem auto; max-width: 1500px; padding: 0 1.25rem 3rem; }
+    .page-info { background: var(--panel); border-left: 5px solid var(--teal); box-shadow: 0 8px 24px #17324d12; display: grid; gap: .35rem 1.5rem; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-bottom: 1.5rem; padding: 1rem 1.25rem; }
+    .page-info p { margin: .2rem 0; }
+    .error { background: #fff0ed; border-left: 5px solid var(--coral); color: #9c3625; padding: .8rem 1rem; }
+    .table-wrap { background: var(--panel); box-shadow: 0 8px 24px #17324d12; overflow-x: auto; }
+    table { border-collapse: collapse; min-width: 1050px; width: 100%; }
+    th { background: var(--blue); color: #fff; font-size: .78rem; letter-spacing: .04em; text-transform: uppercase; }
+    th, td { border-bottom: 1px solid var(--line); padding: .7rem; text-align: left; vertical-align: top; }
+    tbody tr:nth-child(even) { background: #f1f7fa; }
+    tbody tr:hover { background: #e5f3f2; }
+    .badge { background: #fff0ed; border-radius: 999px; color: #9c3625; display: inline-block; font-size: .75rem; font-weight: 700; margin-top: .3rem; padding: .2rem .45rem; }
+    .empty { background: var(--panel); border-top: 4px solid var(--coral); padding: 1.25rem; }
+  </style>
 </head>
 <body>
-  <header><h1>Locator Lense</h1></header>
+  <header><h1>Locator Lense</h1><p>Static HTML locator intelligence report</p></header>
+  <main>
   {% if result.error %}<p class="error">{{ result.error }}</p>{% endif %}
-  <section aria-label="Page information">
+  <section class="page-info" aria-label="Page information">
     <p><strong>Title:</strong> {{ result.title }}</p>
     <p><strong>Final URL:</strong> {{ result.final_url or 'Not available' }}</p>
     <p><strong>Technology:</strong> {{ result.technology }}</p>
   </section>
   {% if result.elements %}
+  <div class="table-wrap">
   <table>
     <thead><tr><th>Category</th><th>Text</th><th>Tag</th><th>Locator</th><th>Type</th><th>Matches</th><th>Score</th><th>Styles</th><th>Attributes</th></tr></thead>
     <tbody>
@@ -22,7 +43,7 @@
         <td>{{ element.category }}</td>
         <td>{{ element.text }}</td>
         <td>{{ element.tag_name }}</td>
-        <td>{{ element.locator }}{% if element.uniqueness %} ({{ element.uniqueness }}){% endif %}</td>
+        <td>{{ element.locator }}{% if element.uniqueness %}<span class="badge">{{ element.uniqueness }}</span>{% endif %}</td>
         <td>{{ element.locator_type }}</td>
         <td>{{ element.match_count }}</td>
         <td>{{ element.score }}</td>
@@ -32,6 +53,8 @@
     {% endfor %}
     </tbody>
   </table>
-  {% else %}<p>No matching visible elements found.</p>{% endif %}
+  </div>
+  {% else %}<p class="empty">No matching visible elements found.</p>{% endif %}
+  </main>
 </body>
 </html>

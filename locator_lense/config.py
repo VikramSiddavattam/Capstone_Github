@@ -10,7 +10,7 @@ LOCATOR_SCORES = {
     "CSS Selector": 75,
     "XPath": 65,
 }
-LOCATOR_PRIORITY = ("id", "name", "data-testid", "CSS Selector", "XPath")
+LOCATOR_PRIORITY = ("id", "name", "data-testid", "XPath", "CSS Selector")
 
 
 @dataclass(frozen=True)

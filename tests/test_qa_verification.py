@@ -80,6 +80,14 @@ def test_qa_hidden_and_invalid_tabindex_elements_are_excluded():
     assert [element.text for element in elements] == ["Visible"]
 
 
+def test_qa_hidden_ancestor_excludes_visible_descendants():
+    soup = parse_html('<section hidden><button>Hidden child</button></section><button>Visible</button>')
+
+    elements = extract_elements(soup)
+
+    assert [element.text for element in elements] == ["Visible"]
+
+
 def test_qa_special_character_locator_is_unique_and_targeting():
     soup = parse_html('<button id="save:primary">Save</button>')
     tag = soup.find("button")
