@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Locator Lense - Project History</title>
+  <style>
+    :root { --ink: #17324d; --muted: #61778a; --paper: #f4f8fb; --panel: #fff; --line: #d7e3ed; --blue: #2369aa; --teal: #168f8a; --coral: #df6b52; }
+    * { box-sizing: border-box; }
+    body { background: linear-gradient(145deg, #f4f8fb, #e8f3f2); color: var(--ink); font-family: "Segoe UI", sans-serif; line-height: 1.6; margin: 0; }
+    header { background: linear-gradient(120deg, #17324d, #2369aa 60%, #168f8a); color: #fff; padding: 3.5rem max(1.25rem, 8vw); }
+    header h1 { font-size: clamp(2.2rem, 5vw, 4.5rem); letter-spacing: -.04em; line-height: 1; margin: 0 0 .75rem; }
+    header p { color: #dcecf5; margin: 0; max-width: 760px; }
+    main { margin: 0 auto; max-width: 1100px; padding: 2rem 1.25rem 4rem; }
+    .summary { background: var(--panel); border-left: 5px solid var(--coral); box-shadow: 0 12px 30px #17324d14; margin-bottom: 2rem; padding: 1.25rem 1.5rem; }
+    .timeline { display: grid; gap: 1rem; }
+    article { background: var(--panel); border: 1px solid var(--line); border-left: 5px solid var(--teal); box-shadow: 0 8px 22px #17324d0d; padding: 1.25rem 1.5rem; }
+    article:nth-child(even) { border-left-color: var(--blue); }
+    h2 { margin: 0 0 .4rem; }
+    h3 { color: var(--blue); font-size: 1rem; margin: 1rem 0 .25rem; }
+    .stage { color: var(--coral); font-size: .76rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+    ul { margin: .35rem 0 0; padding-left: 1.25rem; }
+    .links { background: #eaf5f4; border: 1px solid #c9e4e0; margin-top: 2rem; padding: 1.25rem 1.5rem; }
+    a { color: var(--blue); font-weight: 700; }
+    code { background: #edf3f7; border-radius: 4px; padding: .12rem .3rem; }
+    footer { color: var(--muted); font-size: .9rem; padding-top: 1rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Locator Lense</h1>
+    <p>Project history, decisions, implementation outcomes, and final verification record.</p>
+  </header>
+  <main>
+    <section class="summary">
+      <strong>Final status:</strong> The local/demo MVP is implemented, tested, documented, and committed. The final verification suite reports <strong>38 passing tests</strong>. The original story document remains untracked and was intentionally excluded from commits.
+    </section>
+
+    <section class="timeline" aria-label="Project milestones">
+      <article>
+        <div class="stage">Stage 1 · Product Analysis</div>
+        <h2>Requirements clarified and approved</h2>
+        <h3>Work completed</h3>
+        <ul>
+          <li>Reviewed the Locator Lense user story and converted it into MVP requirements.</li>
+          <li>Clarified subheadings as <code>h2</code>-<code>h6</code> and ARIA headings.</li>
+          <li>Defined visible-only static HTML analysis, URL/raw HTML input, redirects, metadata, styles, technology detection, and report behavior.</li>
+          <li>Defined deterministic locator rules, fixed scores, non-unique handling, and normalized visible text.</li>
+        </ul>
+        <h3>Outcome</h3>
+        <p>Approved requirements were captured in <a href="requirements.md">requirements.md</a>.</p>
+      </article>
+
+      <article>
+        <div class="stage">Stage 2 · Architecture</div>
+        <h2>High-level design created</h2>
+        <h3>Work completed</h3>
+        <ul>
+          <li>Designed a stateless, single-process Flask application.</li>
+          <li>Defined Web Layer, Fetcher, HTML Parser, Element Extractor, Style Resolver, Locator Generator, Technology Detector, and Report Renderer responsibilities.</li>
+          <li>Defined the request-to-report data flow and recommended Python dependencies.</li>
+        </ul>
+        <h3>Outcome</h3>
+        <p>The architecture was documented in <a href="architecture.md">architecture.md</a>.</p>
+      </article>
+
+      <article>
+        <div class="stage">Stage 3 · Design Review</div>
+        <h2>Architecture risks reviewed and scoped</h2>
+        <h3>Work completed</h3>
+        <ul>
+          <li>Reviewed requirements coverage, security, error handling, maintainability, performance, testability, dependency safety, and component ownership.</li>
+          <li>Required basic URL validation, redirect limits, request timeouts, deterministic locators, and safe HTML encoding for the demo MVP.</li>
+          <li>Deferred SSRF protection, advanced resource limits, rate limiting, authentication, background processing, and other production hardening.</li>
+        </ul>
+        <h3>Outcome</h3>
+        <p>Findings and approved decisions were captured in <a href="design-review.md">design-review.md</a>, and the architecture was updated minimally.</p>
+      </article>
+
+      <article>
+        <div class="stage">Stage 4 · Implementation Planning</div>
+        <h2>Dependency-ordered plan created</h2>
+        <h3>Work completed</h3>
+        <ul>
+          <li>Ordered project foundation, input validation, parser/fetcher, analysis passes, locator generation, report rendering, and final validation.</li>
+          <li>Explicitly documented blockers, one-day MVP priorities, deferred work, and completion gates.</li>
+        </ul>
+        <h3>Outcome</h3>
+        <p>The implementation plan was captured in <a href="impl-plan.md">impl-plan.md</a>.</p>
+      </article>
+
+      <article>
+        <div class="stage">Stage 5 · Foundation</div>
+        <h2>Project scaffold and environment established</h2>
+        <h3>Work completed</h3>
+        <ul>
+          <li>Initialized the Git repository and created a project-local <code>.venv</code>.</li>
+          <li>Added <code>requirements.txt</code>, <code>.gitignore</code>, shared configuration, result models, package structure, templates, and tests.</li>
+          <li>Selected <code>tinycss2</code> and pinned Python 3.14-compatible <code>lxml</code>.</li>
+        </ul>
+        <h3>Outcome</h3>
+        <p>The foundation compiled successfully and the shared locator scores and timeout settings were validated.</p>
+      </article>
+
+      <article>
+        <div class="stage">Stage 6 · Core MVP</div>
+        <h2>Application pipeline implemented</h2>
+        <h3>Work completed</h3>
+        <ul>
+          <li>Implemented Flask routes for the input page and analysis report.</li>
+          <li>Implemented URL validation, redirects, final URL capture, timeouts, and linked stylesheet retrieval.</li>
+          <li>Implemented static parsing, visible extraction, ARIA/interactable detection, hidden-state filtering, deduplication, and text normalization.</li>
+          <li>Implemented static styles, technology detection, deterministic locators, fixed scoring, XPath fallback, and HTML-escaped Jinja reports.</li>
+        </ul>
+        <h3>Outcome</h3>
+        <p>The end-to-end local/demo workflow was working and the initial suite passed.</p>
+      </article>
+
+      <article>
+        <div class="stage">Stage 7 · QA and Hardening</div>
+        <h2>Review defects fixed and verification expanded</h2>
+        <h3>Work completed</h3>
+        <ul>
+          <li>Fixed special-character ID locators and identical-sibling locator targeting.</li>
+          <li>Removed duplicate DOM extraction and implemented <code>!important</code> style precedence.</li>
+          <li>Disabled Flask debug mode by default.</li>
+          <li>Upgraded audited dependencies and confirmed no known vulnerabilities with <code>pip-audit</code>.</li>
+          <li>Added unit, integration, edge-case, report, and document verification tests.</li>
+        </ul>
+        <h3>Outcome</h3>
+        <p>The combined verification suite reached <strong>36 passing tests</strong>, then expanded with UI and XPath changes.</p>
+      </article>
+
+      <article>
+        <div class="stage">Stage 8 · UX and Finalization</div>
+        <h2>UI refined and locator preference updated</h2>
+        <h3>Work completed</h3>
+        <ul>
+          <li>Made the input page colorful and responsive with a clear analysis workspace and primary action.</li>
+          <li>Added colorful report styling, responsive tables, status badges, and clearer empty/error states.</li>
+          <li>Excluded non-content nodes and hidden descendants from extraction.</li>
+          <li>Changed fallback preference to <code>id</code> → <code>name</code> → <code>data-testid</code> → XPath → CSS Selector.</li>
+          <li>Aligned requirements, architecture, design review, implementation plan, README, and tests with the final behavior.</li>
+        </ul>
+        <h3>Outcome</h3>
+        <p>The final suite passed with <strong>38 tests</strong>. The latest implementation and UI changes were committed in <code>ed20b4a</code>.</p>
+      </article>
+    </section>
+
+    <section class="links">
+      <h2>Project Documents</h2>
+      <ul>
+        <li><a href="requirements.md">Approved Requirements</a></li>
+        <li><a href="architecture.md">MVP Architecture</a></li>
+        <li><a href="design-review.md">Design Review</a></li>
+        <li><a href="impl-plan.md">Implementation Plan</a></li>
+        <li><a href="README.md">Project README</a></li>
+      </ul>
+    </section>
+
+    <footer>Generated for the Locator Lense local/demo MVP. Production hardening remains outside the approved MVP scope.</footer>
+  </main>
+</body>
+</html>
