@@ -94,9 +94,11 @@ selects the highest-priority locator type and then the candidate with the lowest
 match count within that type. Non-unique selections retain their base score and are
 marked `Non-Unique` in the report.
 
-XPath is preferred over CSS when both are unique. CSS selectors remain available as
-the final fallback and prefer stable attributes and short structural selectors while
-avoiding volatile class names where possible.
+XPath candidates are relative and are preferred over CSS when both are unique. They
+rank stable attributes, normalized text, stable ancestor/axis expressions, and finally
+positional indexes within a stable container. CSS selectors remain the final fallback
+and prefer stable attributes and short structural selectors while avoiding volatile
+class names where possible.
 
 ## Static Analysis Limitations
 

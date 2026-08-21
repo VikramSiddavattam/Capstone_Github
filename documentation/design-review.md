@@ -34,6 +34,13 @@ Reviewed `architecture.md` against the approved MVP requirements and evaluated r
 - **Recommendation:** Prefer stable attributes, avoid volatile/generated classes where possible, select the shortest candidate that uniquely identifies the element, and use structural selectors only as fallback.
 - **Decision:** Required for the local/demo MVP.
 
+### 4a. Relative XPath strategy
+
+- **Finding:** Absolute document-root XPath paths are fragile when page structure changes.
+- **Impact:** Locators can break after unrelated wrapper or layout changes.
+- **Recommendation:** Rank relative XPath candidates by unique stable attributes, normalized visible text, stable ancestor/axis relationships, and finally positional indexes within a stable container. Validate every candidate against the complete DOM.
+- **Decision:** Relative XPath is the preferred fallback before CSS Selector.
+
 ### 5. Safe report encoding
 
 - **Finding:** The report includes untrusted page title, text, attributes, URLs, and style values, but safe rendering is not stated.

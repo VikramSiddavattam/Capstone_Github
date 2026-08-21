@@ -57,9 +57,12 @@ keeping the MVP simple and easy to reason about.
    - Checks uniqueness (match count) against the complete analyzed DOM.
    - Applies fixed base scores (id 100, name 90, data-testid 85, CSS 75, XPath 65),
      prefers unique locators, and marks non-unique ones accordingly.
-   - Generates deterministic CSS candidates, preferring stable attributes and the
-     shortest unique selector while avoiding volatile class names where possible.
-    Uses XPath before CSS structural selectors as the preferred fallback.
+   - Generates deterministic relative XPath candidates before CSS candidates,
+     preferring unique stable attributes, normalized visible text, and stable
+     ancestor/axis expressions. Avoids absolute root-based paths by default and
+     uses positional indexes only as a final fallback within a stable container.
+   - Generates CSS candidates with stable attributes and short unique structural
+     selectors while avoiding volatile class names where possible.
    - Selects and reports a single preferred locator per element (no alternatives).
 
 7. **Technology Stack Detector**

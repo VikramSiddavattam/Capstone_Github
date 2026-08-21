@@ -26,24 +26,65 @@ def _css_quote(value: str) -> str:
     return '"' + value.replace("\\", "\\\\").replace('"', '\\"') + '"'
 
 
+def _xpath_literal(value: str) -> str:
+    if "'" not in value:
+        return f"'{value}'"
+    if '"' not in value:
+        return f'"{value}"'
+    parts = value.split("'")
+    return "concat(" + ", \"'\", ".join(f"'{part}'" for part in parts) + ")"
+
+
 def _is_stable_class(value: str) -> bool:
     return not re.search(r"(^|[-_])(css|sc|jsx|ng|ember|hash)[-_]?[a-z0-9]{4,}$", value.lower())
 
 
-def _element_xpath(tag: Tag) -> str:
-    parts: list[str] = []
-    current: Tag | None = tag
-    while current is not None and current.name not in {"[document]", "html"}:
-        position = 1
-        sibling = current.previous_sibling
-        while sibling is not None:
-            if isinstance(sibling, Tag) and sibling.name == current.name:
-                position += 1
-            sibling = sibling.previous_sibling
-        parts.append(f"{current.name}[{position}]")
-        parent = current.parent
-        current = parent if isinstance(parent, Tag) else None
-    return "/html[1]/" + "/".join(reversed(parts)) if parts else "//*"
+def _stable_attribute_xpath(tag_name: str, attribute: str, value: str) -> str:
+    return f".//{tag_name}[@{attribute}={_xpath_literal(value)}]"
+
+
+def _ancestor_xpath(tag: Tag, ancestor: Tag, ancestor_attribute: str) -> str:
+    ancestor_value = str(ancestor.get(ancestor_attribute))
+    tag_name = tag.name
+    ancestor_name = ancestor.name
+    return (
+        f".//{tag_name}[ancestor::{ancestor_name}[@{ancestor_attribute}="
+        f"{_xpath_literal(ancestor_value)}]]"
+    )
+
+
+def _relative_xpath_candidates(tag: Tag) -> list[str]:
+    candidates: list[str] = []
+    tag_name = tag.name
+    for attribute in ("id", "name", "data-testid", "aria-label", "role", "title", "placeholder"):
+        if tag.get(attribute):
+            candidates.append(_stable_attribute_xpath(tag_name, attribute, str(tag[attribute])))
+
+    text = " ".join(tag.get_text(" ", strip=True).split())
+    if text:
+        literal = _xpath_literal(text)
+        candidates.append(f".//{tag_name}[normalize-space(.)={literal}]")
+        if len(text) >= 12:
+            candidates.append(f".//{tag_name}[contains(normalize-space(.), {literal})]")
+
+    ancestor = tag.parent
+    while isinstance(ancestor, Tag):
+        for attribute in ("id", "data-testid", "name", "aria-label", "role"):
+            if ancestor.get(attribute):
+                candidates.append(_ancestor_xpath(tag, ancestor, attribute))
+                break
+        if any(ancestor.get(attribute) for attribute in ("id", "data-testid", "name", "aria-label", "role")):
+            break
+        ancestor = ancestor.parent
+
+    parent = tag.parent
+    if isinstance(parent, Tag):
+        same_tag_siblings = [child for child in parent.find_all(tag.name, recursive=False)]
+        if len(same_tag_siblings) > 1:
+            position = next(index for index, sibling in enumerate(same_tag_siblings, 1) if sibling is tag)
+            candidates.append(f".//{parent.name}/{tag_name}[{position}]")
+
+    return list(dict.fromkeys(candidates))
 
 
 def _css_candidates(tag: Tag) -> list[str]:
@@ -105,7 +146,7 @@ def _candidate_pairs(tag: Tag) -> list[tuple[str, str]]:
         pairs.append(("name", f"[name={_css_quote(str(tag['name']))}]"))
     if tag.get("data-testid"):
         pairs.append(("data-testid", f"[data-testid={_css_quote(str(tag['data-testid']))}]"))
-    pairs.append(("XPath", _element_xpath(tag)))
+    pairs.extend(("XPath", candidate) for candidate in _relative_xpath_candidates(tag))
     pairs.extend(("CSS Selector", candidate) for candidate in _css_candidates(tag))
     return pairs
 

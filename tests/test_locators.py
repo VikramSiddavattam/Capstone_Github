@@ -78,8 +78,9 @@ def test_identical_siblings_get_the_targeting_xpath_position():
 
     result = generate_locator(soup.find_all("span")[1], soup)
 
-    assert result.locator == "/html[1]/body[1]/div[1]/span[2]"
     assert result.locator_type == "XPath"
+    assert not result.locator.startswith("/")
+    assert result.locator == ".//div/span[2]"
 
 
 def test_xpath_is_used_when_css_candidates_are_unavailable(monkeypatch):
@@ -91,3 +92,33 @@ def test_xpath_is_used_when_css_candidates_are_unavailable(monkeypatch):
     assert result.locator_type == "XPath"
     assert result.match_count == 1
     assert result.score == 65
+
+
+def test_xpath_prefers_stable_attributes_and_never_uses_absolute_root():
+    soup = parse_html('<section id="account"><button aria-label="Save">Save</button></section>')
+
+    result = generate_locator(soup.find("button"), soup)
+
+    assert result.locator_type == "XPath"
+    assert result.locator == ".//button[@aria-label='Save']"
+    assert not result.locator.startswith("/")
+
+
+def test_xpath_uses_normalized_text_for_dynamic_elements():
+    soup = parse_html('<div><button>  Save   changes </button></div>')
+
+    result = generate_locator(soup.find("button"), soup)
+
+    assert result.locator_type == "XPath"
+    assert "normalize-space" in result.locator
+    assert result.match_count == 1
+
+
+def test_xpath_can_use_a_stable_ancestor_axis():
+    soup = parse_html('<section id="account"><button class="generated">Save</button></section><button>Save</button>')
+
+    result = generate_locator(soup.find("button"), soup)
+
+    assert result.locator_type == "XPath"
+    assert "ancestor::section" in result.locator
+    assert result.match_count == 1

@@ -158,7 +158,8 @@ def test_qa_implementation_plan_has_dependency_order_blockers_and_validation():
     ):
         assert section in text
     assert "Blocked until complete" in text
-    assert "XPath" in text
+    for decision in ("XPath", "relative", "normalize-space", "ancestor::"):
+        assert decision in text
     assert "HTML encoding" in text
 
 
