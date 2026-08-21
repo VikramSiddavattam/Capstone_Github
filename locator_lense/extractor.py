@@ -36,7 +36,11 @@ def _style_hides(tag: Tag) -> bool:
 def is_visible(tag: Tag) -> bool:
     current: Tag | None = tag
     while current is not None:
-        if current.has_attr("hidden") or str(current.get("aria-hidden", "")).lower() == "true":
+        if (
+            current.has_attr("hidden")
+            or str(current.get("aria-hidden", "")).lower() == "true"
+            or (current.name == "input" and str(current.get("type", "")).lower() == "hidden")
+        ):
             return False
         if _style_hides(current):
             return False

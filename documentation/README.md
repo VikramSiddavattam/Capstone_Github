@@ -146,11 +146,14 @@ templates/
   index.html                   Input form
   report.html                  HTML analysis report
 tests/                          Unit, integration, and QA verification tests
-requirements.md                Approved product requirements
-architecture.md                Approved MVP architecture
-design-review.md               Architecture review decisions
-impl-plan.md                   Dependency-ordered implementation plan
-README.md                      Project setup and usage guide
+documentation/
+  requirements.md              Approved product requirements
+  architecture.md              Approved MVP architecture
+  design-review.md             Architecture review decisions
+  impl-plan.md                 Dependency-ordered implementation plan
+  project-history.html         Project history and screenshots
+  screenshots/                 Application and report screenshots
+  README.md                    Project setup and usage guide
 ```
 
 ## MVP Scope and Deferred Work

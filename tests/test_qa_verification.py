@@ -71,6 +71,7 @@ def test_qa_hidden_and_invalid_tabindex_elements_are_excluded():
         <button hidden>Hidden</button>
         <button aria-hidden="true">Hidden too</button>
         <button style="display: none">Hidden style</button>
+        <input type="hidden" name="token" value="secret">
         <div tabindex="bad">Invalid tabindex</div>
         <button>Visible</button>
     """)
@@ -107,7 +108,7 @@ def test_qa_url_validation_matrix():
 
 
 def test_qa_requirements_document_has_all_required_sections_and_decisions():
-    text = (ROOT / "requirements.md").read_text(encoding="utf-8")
+    text = (ROOT / "documentation" / "requirements.md").read_text(encoding="utf-8")
     required_sections = (
         "## 1. Summary",
         "## 2. Functional Requirements",
@@ -125,7 +126,7 @@ def test_qa_requirements_document_has_all_required_sections_and_decisions():
 
 
 def test_qa_architecture_document_covers_approved_components_and_constraints():
-    text = (ROOT / "architecture.md").read_text(encoding="utf-8")
+    text = (ROOT / "documentation" / "architecture.md").read_text(encoding="utf-8")
     for term in (
         "Web Layer",
         "Fetcher",
@@ -147,7 +148,7 @@ def test_qa_architecture_document_covers_approved_components_and_constraints():
 
 
 def test_qa_implementation_plan_has_dependency_order_blockers_and_validation():
-    text = (ROOT / "impl-plan.md").read_text(encoding="utf-8")
+    text = (ROOT / "documentation" / "impl-plan.md").read_text(encoding="utf-8")
     for section in (
         "## 2. Dependency-Ordered Tasks",
         "## 3. One-Day MVP Priorities",
@@ -163,7 +164,7 @@ def test_qa_implementation_plan_has_dependency_order_blockers_and_validation():
 
 def test_qa_documents_are_nonempty_and_utf8_readable():
     for filename in ("requirements.md", "architecture.md", "impl-plan.md"):
-        path = ROOT / filename
+        path = ROOT / "documentation" / filename
         assert path.exists()
         assert path.stat().st_size > 500
         assert path.read_text(encoding="utf-8").strip()
