@@ -73,14 +73,15 @@ def test_special_character_id_keeps_id_priority():
     assert result.score == 100
 
 
-def test_identical_siblings_get_the_targeting_xpath_position():
+def test_identical_siblings_prefer_axis_xpath_before_position():
     soup = parse_html("<div><span>Same</span><span>Same</span></div>")
 
     result = generate_locator(soup.find_all("span")[1], soup)
 
     assert result.locator_type == "XPath"
     assert not result.locator.startswith("/")
-    assert result.locator == ".//div/span[2]"
+    assert "following-sibling::span" in result.locator
+    assert result.match_count == 1
 
 
 def test_xpath_is_used_when_css_candidates_are_unavailable(monkeypatch):
@@ -114,13 +115,51 @@ def test_xpath_uses_normalized_text_for_dynamic_elements():
     assert result.match_count == 1
 
 
-def test_xpath_can_use_a_stable_ancestor_axis():
+def test_xpath_can_use_a_stable_descendant_axis():
     soup = parse_html('<section id="account"><button class="generated">Save</button></section><button>Save</button>')
 
     result = generate_locator(soup.find("button"), soup)
 
     assert result.locator_type == "XPath"
-    assert "ancestor::section" in result.locator
+    assert "descendant::button" in result.locator
+    assert result.match_count == 1
+
+
+def test_xpath_generates_ancestor_axis_candidate_for_stable_context():
+    candidates = locators._relative_xpath_candidates(
+        parse_html('<section id="account"><button>Save</button></section>').find("button")
+    )
+
+    assert any("ancestor::section" in candidate for candidate in candidates)
+
+
+def test_xpath_uses_following_sibling_axis_for_context():
+    soup = parse_html('<form><label id="email-label">Email</label><input><input></form>')
+
+    result = generate_locator(soup.find("input"), soup)
+
+    assert result.locator_type == "XPath"
+    assert "following-sibling::input" in result.locator
+    assert result.match_count == 1
+
+
+def test_xpath_uses_preceding_sibling_axis_for_context():
+    soup = parse_html('<form><input><input><label id="email-label">Email</label></form>')
+
+    result = generate_locator(soup.find_all("input")[1], soup)
+
+    assert result.locator_type == "XPath"
+    assert "preceding-sibling::input" in result.locator
+    assert result.match_count == 1
+
+
+def test_xpath_uses_positional_fallback_only_without_stable_context():
+    soup = parse_html("<div><input><input></div>")
+
+    result = generate_locator(soup.find_all("input")[1], soup)
+
+    assert result.locator_type == "XPath"
+    assert result.locator == ".//div/input[2]"
     assert result.match_count == 1
 
 

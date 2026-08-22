@@ -73,7 +73,7 @@ The report header displays `Locator Lense` and includes:
 - Page title.
 - Final resolved URL for URL analysis.
 - Detected technology or `Not detected`.
-- A table containing category, normalized text, tag name, selected locator, locator
+- A table containing normalized text, category, tag name, selected locator, locator
   type, match count, score, styles, and relevant attributes.
 
 Missing style values are shown as `Not available`. Empty reports state when no
@@ -95,7 +95,8 @@ match count within that type. Non-unique selections retain their base score and 
 marked `Non-Unique` in the report.
 
 XPath candidates are relative and are preferred over CSS when both are unique. They
-rank stable attributes, normalized text, stable ancestor/axis expressions, and finally
+rank stable attributes, normalized text, stable `ancestor::`, `descendant::`,
+`following-sibling::`, and `preceding-sibling::` axis expressions, and finally
 positional indexes within a stable container. CSS selectors remain the final fallback
 and prefer stable attributes and short structural selectors while avoiding volatile
 class names where possible.

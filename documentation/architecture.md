@@ -59,7 +59,8 @@ keeping the MVP simple and easy to reason about.
      prefers unique locators, and marks non-unique ones accordingly.
    - Generates deterministic relative XPath candidates before CSS candidates,
      preferring unique stable attributes, normalized visible text, and stable
-     ancestor/axis expressions. Avoids absolute root-based paths by default and
+     axis expressions such as `ancestor::`, `descendant::`, `following-sibling::`,
+     and `preceding-sibling::`. Avoids absolute root-based paths by default and
      uses positional indexes only as a final fallback within a stable container.
    - Generates CSS candidates with stable attributes and short unique structural
      selectors while avoiding volatile class names where possible.
@@ -75,7 +76,8 @@ keeping the MVP simple and easy to reason about.
    - Assembles all analysis output into the `Locator Lense` HTML report using a
      server-side template (Jinja2).
    - Displays page info (title, final resolved URL, detected tech stack), and a
-     table of extracted elements with their metadata.
+     table of extracted elements with their metadata, with visible text shown before
+     category.
    - Clearly flags missing metadata, unavailable URLs, no matching elements, and
      non-unique locators.
    - HTML-escapes all analyzed values through template autoescaping; analyzed page

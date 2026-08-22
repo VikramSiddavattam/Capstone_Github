@@ -36,12 +36,12 @@
   {% if result.elements %}
   <div class="table-wrap">
   <table>
-    <thead><tr><th>Category</th><th>Text</th><th>Tag</th><th>Locator</th><th>Type</th><th>Matches</th><th>Score</th><th>Styles</th><th>Attributes</th></tr></thead>
+    <thead><tr><th>Text</th><th>Category</th><th>Tag</th><th>Locator</th><th>Type</th><th>Matches</th><th>Score</th><th>Styles</th><th>Attributes</th></tr></thead>
     <tbody>
     {% for element in result.elements %}
       <tr>
-        <td>{{ element.category }}</td>
         <td>{{ element.text }}</td>
+        <td>{{ element.category }}</td>
         <td>{{ element.tag_name }}</td>
         <td>{{ element.locator }}{% if element.uniqueness %}<span class="badge">{{ element.uniqueness }}</span>{% endif %}</td>
         <td>{{ element.locator_type }}</td>

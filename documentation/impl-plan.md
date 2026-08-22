@@ -90,8 +90,9 @@ After the parser and input/resource contracts are available, these tasks can pro
    - Prefer the shortest candidate that uniquely identifies the target.
    - Use structural selectors as fallback.
 33. Generate relative XPath candidates that prefer stable attributes, normalized text
-   with `normalize-space()` or `contains()`, stable `ancestor::`/axis relationships,
-   and positional indexes only within stable containers as a last fallback.
+   with `normalize-space()` or `contains()`, stable `ancestor::`, `descendant::`,
+   `following-sibling::`, and `preceding-sibling::` axis relationships, and
+   positional indexes only within stable containers as a last fallback.
 34. Generate CSS selectors only after XPath candidates have been evaluated.
 35. Calculate each candidate's match count against the complete analyzed DOM.
 36. Apply fixed base scores:
@@ -115,7 +116,7 @@ After the parser and input/resource contracts are available, these tasks can pro
    - Page title.
    - Final resolved URL when applicable.
    - Detected technology stack.
-43. Render the element table with category, normalized text, tag, selected locator, locator type, match count, score, styles, and relevant attributes.
+43. Render the element table with normalized text first, then category, tag, selected locator, locator type, match count, score, styles, and relevant attributes.
 44. Render clear states for:
    - Empty or invalid input.
    - Unavailable URL.

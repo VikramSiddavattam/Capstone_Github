@@ -38,7 +38,7 @@ Reviewed `architecture.md` against the approved MVP requirements and evaluated r
 
 - **Finding:** Absolute document-root XPath paths are fragile when page structure changes.
 - **Impact:** Locators can break after unrelated wrapper or layout changes.
-- **Recommendation:** Rank relative XPath candidates by unique stable attributes, normalized visible text, stable ancestor/axis relationships, and finally positional indexes within a stable container. Validate every candidate against the complete DOM.
+- **Recommendation:** Rank relative XPath candidates by unique stable attributes, normalized visible text, stable axis relationships such as `ancestor::`, `descendant::`, `following-sibling::`, and `preceding-sibling::`, and finally positional indexes within a stable container. Validate every candidate against the complete DOM.
 - **Decision:** Relative XPath is the preferred fallback before CSS Selector.
 
 ### 5. Safe report encoding

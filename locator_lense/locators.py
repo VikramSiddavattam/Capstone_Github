@@ -55,6 +55,17 @@ def _stable_attribute_xpath(tag_name: str, attribute: str, value: str) -> str:
     return f".//{tag_name}[@{attribute}={_xpath_literal(value)}]"
 
 
+def _stable_predicates(tag: Tag) -> list[str]:
+    predicates: list[str] = []
+    for attribute in ("id", "name", "data-testid", "aria-label", "role", "title", "placeholder"):
+        if tag.get(attribute):
+            predicates.append(f"@{attribute}={_xpath_literal(str(tag[attribute]))}")
+    text = " ".join(tag.get_text(" ", strip=True).split())
+    if text:
+        predicates.append(f"normalize-space(.)={_xpath_literal(text)}")
+    return predicates
+
+
 def _ancestor_xpath(tag: Tag, ancestor: Tag, ancestor_attribute: str) -> str:
     ancestor_value = str(ancestor.get(ancestor_attribute))
     tag_name = tag.name
@@ -63,6 +74,49 @@ def _ancestor_xpath(tag: Tag, ancestor: Tag, ancestor_attribute: str) -> str:
         f".//{tag_name}[ancestor::{ancestor_name}[@{ancestor_attribute}="
         f"{_xpath_literal(ancestor_value)}]]"
     )
+
+
+def _descendant_xpath(tag: Tag, ancestor: Tag, ancestor_attribute: str) -> str:
+    ancestor_value = str(ancestor.get(ancestor_attribute))
+    tag_name = tag.name
+    ancestor_name = ancestor.name
+    text = " ".join(tag.get_text(" ", strip=True).split())
+    if text:
+        return (
+            f".//{ancestor_name}[@{ancestor_attribute}={_xpath_literal(ancestor_value)}]"
+            f"/descendant::{tag_name}[normalize-space(.)={_xpath_literal(text)}]"
+        )
+    descendants = [candidate for candidate in ancestor.find_all(tag.name) if candidate is tag or tag in candidate.find_all(True)]
+    if tag in descendants:
+        return (
+            f".//{ancestor_name}[@{ancestor_attribute}={_xpath_literal(ancestor_value)}]"
+            f"/descendant::{tag_name}[{descendants.index(tag) + 1}]"
+        )
+    return _ancestor_xpath(tag, ancestor, ancestor_attribute)
+
+
+def _sibling_axis_candidates(tag: Tag) -> list[str]:
+    candidates: list[str] = []
+    previous_sibling = tag.find_previous_sibling()
+    while isinstance(previous_sibling, Tag):
+        predicates = _stable_predicates(previous_sibling)
+        if predicates:
+            candidates.append(
+                f".//{previous_sibling.name}[{predicates[0]}]/following-sibling::{tag.name}[1]"
+            )
+            break
+        previous_sibling = previous_sibling.find_previous_sibling()
+
+    next_sibling = tag.find_next_sibling()
+    while isinstance(next_sibling, Tag):
+        predicates = _stable_predicates(next_sibling)
+        if predicates:
+            candidates.append(
+                f".//{next_sibling.name}[{predicates[0]}]/preceding-sibling::{tag.name}[1]"
+            )
+            break
+        next_sibling = next_sibling.find_next_sibling()
+    return candidates
 
 
 def _relative_xpath_candidates(tag: Tag) -> list[str]:
@@ -83,11 +137,14 @@ def _relative_xpath_candidates(tag: Tag) -> list[str]:
     while isinstance(ancestor, Tag):
         for attribute in ("id", "data-testid", "name", "aria-label", "role"):
             if ancestor.get(attribute):
+                candidates.append(_descendant_xpath(tag, ancestor, attribute))
                 candidates.append(_ancestor_xpath(tag, ancestor, attribute))
                 break
         if any(ancestor.get(attribute) for attribute in ("id", "data-testid", "name", "aria-label", "role")):
             break
         ancestor = ancestor.parent
+
+    candidates.extend(_sibling_axis_candidates(tag))
 
     parent = tag.parent
     if isinstance(parent, Tag):

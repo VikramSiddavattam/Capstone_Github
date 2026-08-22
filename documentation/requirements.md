@@ -36,8 +36,8 @@ The MVP analyzes static HTML only. It does not execute JavaScript or analyze dyn
 ### Element Metadata and Styles
 
 14. For each extracted element, the report shall display:
-   - Element category.
    - Normalized visible text.
+   - Element category.
    - Tag name.
    - Preferred locator.
    - Locator type.
