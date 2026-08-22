@@ -1,7 +1,8 @@
 """Deterministic preferred locator generation."""
 
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import Any
 
 from bs4 import BeautifulSoup, Tag
 from lxml import html as lxml_html
@@ -16,6 +17,17 @@ class LocatorResult:
     match_count: int
     score: int
     uniqueness: str
+
+
+@dataclass
+class LocatorContext:
+    soup: BeautifulSoup
+    xpath_document: Any
+    match_counts: dict[tuple[str, str], int] = field(default_factory=dict)
+
+
+def create_locator_context(soup: BeautifulSoup) -> LocatorContext:
+    return LocatorContext(soup=soup, xpath_document=lxml_html.fromstring(str(soup)))
 
 
 def _css_escape(value: str) -> str:
@@ -115,27 +127,33 @@ def _element_css_path(tag: Tag) -> str:
     return "html > " + " > ".join(reversed(parts))
 
 
-def _match_count(soup: BeautifulSoup, locator_type: str, locator: str) -> int:
+def _match_count(context: LocatorContext, locator_type: str, locator: str) -> int:
+    cache_key = (locator_type, locator)
+    if cache_key in context.match_counts:
+        return context.match_counts[cache_key]
+    soup = context.soup
     if locator_type == "id":
         try:
-            return len(soup.select(locator))
+            count = len(soup.select(locator))
         except Exception:
-            return 0
-    if locator_type in {"name", "data-testid"}:
+            count = 0
+    elif locator_type in {"name", "data-testid"}:
         value = locator.split("=", 1)[1].rsplit("]", 1)[0].strip('"')
-        return len(soup.find_all(attrs={locator_type: value}))
-    if locator_type == "CSS Selector":
+        count = len(soup.find_all(attrs={locator_type: value}))
+    elif locator_type == "CSS Selector":
         try:
-            return len(soup.select(locator))
+            count = len(soup.select(locator))
         except Exception:
-            return 0
-    if locator_type == "XPath":
+            count = 0
+    elif locator_type == "XPath":
         try:
-            document = lxml_html.fromstring(str(soup))
-            return len(document.xpath(locator))
+            count = len(context.xpath_document.xpath(locator))
         except (ValueError, TypeError):
-            return 0
-    return 0
+            count = 0
+    else:
+        count = 0
+    context.match_counts[cache_key] = count
+    return count
 
 
 def _candidate_pairs(tag: Tag) -> list[tuple[str, str]]:
@@ -151,17 +169,37 @@ def _candidate_pairs(tag: Tag) -> list[tuple[str, str]]:
     return pairs
 
 
-def generate_locator(tag: Tag, soup: BeautifulSoup) -> LocatorResult:
-    candidates: list[tuple[str, str, int, bool]] = []
-    for locator_type, locator in _candidate_pairs(tag):
-        match_count = _match_count(soup, locator_type, locator)
-        is_unique = match_count == 1
-        candidates.append((locator_type, locator, match_count, is_unique))
-    unique = [candidate for candidate in candidates if candidate[3]]
-    if unique:
-        selected = min(unique, key=lambda item: (LOCATOR_PRIORITY.index(item[0]), len(item[1]), item[1]))
+def _candidate_pairs_for_type(tag: Tag, locator_type: str) -> list[tuple[str, str]]:
+    if locator_type == "id" and tag.get("id"):
+        return [("id", "#" + _css_escape(str(tag["id"])))]
+    if locator_type == "name" and tag.get("name"):
+        return [("name", f"[name={_css_quote(str(tag['name']))}]")]
+    if locator_type == "data-testid" and tag.get("data-testid"):
+        return [("data-testid", f"[data-testid={_css_quote(str(tag['data-testid']))}]")]
+    if locator_type == "XPath":
+        return [("XPath", candidate) for candidate in _relative_xpath_candidates(tag)]
+    if locator_type == "CSS Selector":
+        return [("CSS Selector", candidate) for candidate in _css_candidates(tag)]
+    return []
+
+
+def generate_locator(tag: Tag, soup: BeautifulSoup, context: LocatorContext | None = None) -> LocatorResult:
+    active_context = context or create_locator_context(soup)
+    non_unique_candidates: list[tuple[str, str, int, bool]] = []
+    for locator_type in LOCATOR_PRIORITY:
+        type_candidates: list[tuple[str, str, int, bool]] = []
+        for _, locator in _candidate_pairs_for_type(tag, locator_type):
+            match_count = _match_count(active_context, locator_type, locator)
+            candidate = (locator_type, locator, match_count, match_count == 1)
+            type_candidates.append(candidate)
+            if match_count != 1:
+                non_unique_candidates.append(candidate)
+        unique_candidates = [candidate for candidate in type_candidates if candidate[3]]
+        if unique_candidates:
+            selected = unique_candidates[0]
+            break
     else:
-        selected = min(candidates, key=lambda item: (LOCATOR_PRIORITY.index(item[0]), item[2], len(item[1]), item[1]))
+        selected = min(non_unique_candidates, key=lambda item: (LOCATOR_PRIORITY.index(item[0]), item[2], len(item[1]), item[1]))
     locator_type, locator, match_count, is_unique = selected
     return LocatorResult(
         locator=locator,

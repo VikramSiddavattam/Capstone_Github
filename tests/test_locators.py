@@ -1,5 +1,5 @@
 import locator_lense.locators as locators
-from locator_lense.locators import generate_locator
+from locator_lense.locators import create_locator_context, generate_locator
 from locator_lense.parser import parse_html
 
 
@@ -122,3 +122,22 @@ def test_xpath_can_use_a_stable_ancestor_axis():
     assert result.locator_type == "XPath"
     assert "ancestor::section" in result.locator
     assert result.match_count == 1
+
+
+def test_shared_locator_context_parses_xpath_document_once(monkeypatch):
+    calls = 0
+    original_fromstring = locators.lxml_html.fromstring
+
+    def counting_fromstring(*args, **kwargs):
+        nonlocal calls
+        calls += 1
+        return original_fromstring(*args, **kwargs)
+
+    monkeypatch.setattr(locators.lxml_html, "fromstring", counting_fromstring)
+    soup = parse_html("<main>" + "".join(f'<button aria-label="Action {index}">Action</button>' for index in range(20)) + "</main>")
+    context = create_locator_context(soup)
+
+    for button in soup.find_all("button"):
+        generate_locator(button, soup, context)
+
+    assert calls == 1
