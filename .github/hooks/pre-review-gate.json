@@ -1,0 +1,12 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "type": "command",
+        "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File .github/hooks/scripts/pre-review-gate.ps1",
+        "windows": "powershell -NoProfile -ExecutionPolicy Bypass -File .github/hooks/scripts/pre-review-gate.ps1",
+        "timeout": 15
+      }
+    ]
+  }
+}
