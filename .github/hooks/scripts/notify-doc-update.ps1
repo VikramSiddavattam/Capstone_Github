@@ -1,5 +1,5 @@
 # PostToolUse hook: after a file-editing tool runs, check whether any touched
-# path is under locator_lense/ and, if so, remind the agent to sync documentation/*.md.
+# path affects project intelligence and remind the agent to sync documentation.
 $ErrorActionPreference = 'Stop'
 
 try {
@@ -12,26 +12,43 @@ try {
 }
 
 # Only react to tools that create or modify files.
-$editTools = @('editFiles', 'createFile', 'create_file', 'replace_string_in_file', 'multi_replace_string_in_file', 'insert_edit_into_file')
+$editTools = @('editFiles', 'createFile', 'create_file', 'replace_string_in_file', 'multi_replace_string_in_file', 'insert_edit_into_file', 'apply_patch')
 if ($data.tool_name -and ($editTools -notcontains $data.tool_name)) {
     exit 0
 }
 
-# Serialize tool_input to text and scan it for locator_lense/*.py path references.
+# Serialize tool_input to text and scan it for major project path references.
 # This sidesteps PowerShell's array-unwrapping quirks that plague recursive collectors.
 $toolInputText = $data.tool_input | ConvertTo-Json -Compress
 if (-not $toolInputText) { exit 0 }
 
-$matches = [regex]::Matches($toolInputText, '"([^"]*locator_lense[^"]*\.py)"')
-if ($matches.Count -eq 0) { exit 0 }
+$normalizedToolInput = $toolInputText.Replace('\\', '/')
+$majorPathMarkers = @(
+    'app.py',
+    'README.md',
+    'documentation/',
+    'locator_lense/',
+    'templates/',
+    'tests/',
+    '.github/',
+    '.vscode/',
+    'rag/project-intelligence.md'
+)
 
-$changedSource = $matches | ForEach-Object { $_.Groups[1].Value -replace '\\\\', '\' } | Select-Object -Unique
-$fileList = $changedSource -join ', '
+$isRelevantChange = $false
+foreach ($marker in $majorPathMarkers) {
+    if ($normalizedToolInput.Contains($marker)) {
+        $isRelevantChange = $true
+        break
+    }
+}
+
+if (-not $isRelevantChange) { exit 0 }
 
 $output = [ordered]@{
     hookSpecificOutput = [ordered]@{
         hookEventName      = 'PostToolUse'
-        additionalContext  = "Source code under locator_lense/ changed ($fileList). Review the Markdown files in documentation/ (architecture.md, design-review.md, impl-plan.md, requirements.md) and update any sections describing the changed module(s) so the docs stay in sync with the code."
+        additionalContext  = "Project intelligence-relevant files changed. Review and refresh documentation/*.md and rag/project-intelligence.md when behavior, architecture, features, quality gates, or developer workflow changed. Keep rag/project-intelligence.md concise, factual, and optimized for AI retrieval."
     }
 }
 

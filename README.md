@@ -193,6 +193,8 @@ documentation/
   impl-plan.md                 Dependency-ordered implementation plan
   project-history.html         Project history and screenshots
   screenshots/                 Application and report screenshots
+rag/
+  project-intelligence.md      AI retrieval source for app, architecture, and SDLC context
 .github/
   copilot-instructions.md      Repository-wide SDLC standards
   agents/                      One *.agent.md subagent per SDLC role
