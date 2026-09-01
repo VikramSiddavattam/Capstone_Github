@@ -1,0 +1,33 @@
+{
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "github_mcp_pat_v2",
+      "description": "New GitHub Personal Access Token",
+      "password": true
+    }
+  ],
+  "servers": {
+    "github": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/",
+      "headers": {
+        "Authorization": "Bearer ${input:github_mcp_pat_v2}"
+      }
+    },
+    "mcp.epam.com/jira": {
+      "type": "http",
+      "url": "https://mcp.epam.com/mcp/jira",
+      "headers": {
+        "Authorization": "Bearer ${env:JIRA_MCP_TOKEN}"
+      }
+    },
+    "mcp.epam.com/kb": {
+      "type": "http",
+      "url": "https://mcp.epam.com/mcp/kb",
+      "headers": {
+        "Authorization": "Bearer ${env:KB_MCP_TOKEN}"
+      }
+    }
+  }
+}

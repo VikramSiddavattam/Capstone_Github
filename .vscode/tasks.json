@@ -1,0 +1,33 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Run tests",
+      "type": "shell",
+      "command": "${config:python.defaultInterpreterPath}",
+      "args": [
+        "-m",
+        "pytest",
+        "-q"
+      ],
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Lint",
+      "type": "shell",
+      "command": "${config:python.defaultInterpreterPath}",
+      "args": [
+        "-m",
+        "flake8",
+        ".",
+        "--max-line-length=100"
+      ],
+      "group": "test",
+      "problemMatcher": "$flake8"
+    }
+  ]
+}

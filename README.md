@@ -132,6 +132,43 @@ For dependency vulnerability auditing:
 .\.venv\Scripts\python.exe -m pip_audit -r requirements.txt
 ```
 
+For linting (matches the `quality-gate` CI check):
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install flake8
+.\.venv\Scripts\python.exe -m flake8 . --max-line-length=100
+```
+
+## Continuous Integration
+
+GitHub Actions workflows in `.github/workflows/` enforce the Development, Code
+Review, Verification, and Pull Request phases with automated evidence:
+
+- `ci.yml` runs the full pytest suite on every push and pull request to `main`.
+- `quality-gate.yml` runs `flake8` and the full test suite as a required pull
+  request check, uploading test results as an artifact.
+- `codeql.yml` runs CodeQL static security analysis on pushes, pull requests, and
+  a weekly schedule.
+
+## Development Workflow (Agentic SDLC)
+
+This project was built using a Copilot-driven, agent-based SDLC workflow defined
+under `.github/`:
+
+- `.github/copilot-instructions.md` — repository-wide standards applied to every phase.
+- `.github/agents/*.agent.md` — one subagent per SDLC role (Requirements,
+  Architecture, Design Review, Implementation Plan, Development, Code Review,
+  Verification, PR).
+- `.github/skills/<name>/SKILL.md` — reusable expertise shared across agents
+  (`requirements-analysis`, `architecture-design`, `review`, `verification`).
+- `.github/prompts/orchestrator.prompt.md` — the single entry point that
+  sequences all agents end-to-end, with retry loops for failed reviews/verification.
+- `.github/hooks/` — deterministic reminder to keep `documentation/*.md` in sync
+  when `locator_lense/` source changes.
+
+Each phase's output is a versioned artifact under `documentation/` (see below),
+giving full traceability from requirements to the pull request description.
+
 ## Project Structure
 
 ```text
@@ -156,7 +193,13 @@ documentation/
   impl-plan.md                 Dependency-ordered implementation plan
   project-history.html         Project history and screenshots
   screenshots/                 Application and report screenshots
-  README.md                    Project setup and usage guide
+.github/
+  copilot-instructions.md      Repository-wide SDLC standards
+  agents/                      One *.agent.md subagent per SDLC role
+  skills/                      Reusable SKILL.md expertise shared across agents
+  prompts/                     orchestrator.prompt.md end-to-end entry point
+  hooks/                       Deterministic doc-sync reminder automation
+  workflows/                   CI, quality-gate, and CodeQL GitHub Actions
 ```
 
 ## MVP Scope and Deferred Work
