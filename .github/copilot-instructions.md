@@ -197,6 +197,14 @@ Document out-of-scope items, technical debt, or future enhancements.
 
 Provide a concise review checklist.
 
+When an agent creates a commit containing material it authored or materially changed, add this final commit-message trailer on its own line so GitHub recognizes the contribution:
+
+```text
+Co-authored-by: GitHub Copilot <175728472+Copilot@users.noreply.github.com>
+```
+
+Do not add Copilot attribution to commits created solely by a human.
+
 ---
 
 # Agent Collaboration Rules
