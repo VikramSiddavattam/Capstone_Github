@@ -22,6 +22,7 @@ Compile a complete, accurate pull request description from the SDLC artifacts so
 - Summarize verification activities and cite concrete test evidence from `documentation/verification-report.md`.
 - Document known limitations, out-of-scope items, and technical debt.
 - Provide a concise reviewer checklist.
+- Ensure the pull request includes the required labels: `ai-generated`, `github-copilot`, and `sdlc-framework`.
 - Refuse to mark a PR ready if verification did not pass or blocking review findings are unresolved — report the blocker instead.
 
 ## Inputs
@@ -34,11 +35,13 @@ Compile a complete, accurate pull request description from the SDLC artifacts so
 ## Outputs
 
 - documentation/pr-description.md
+- GitHub pull request with required labels: `ai-generated`, `github-copilot`, `sdlc-framework`
 
 ## Success Criteria
 
 - Summary, Changes Made, Test Evidence, Known Limitations, and Reviewer Checklist sections are all present.
 - Test evidence is traceable to the verification report, not invented.
+- Required PR labels are present on the pull request.
 - Any unresolved Critical/High review finding blocks PR readiness and is surfaced explicitly.
 
 ## Contributors
@@ -61,6 +64,7 @@ PR is READY only if:
 - No unresolved High review findings
 - Required test evidence exists
 - Requirements and implementation are traceable
+- Required labels are attached: `ai-generated`, `github-copilot`, `sdlc-framework`
 
 Otherwise:
 
