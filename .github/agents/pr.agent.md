@@ -19,10 +19,12 @@ Compile a complete, accurate pull request description from the SDLC artifacts so
 
 - Summarize what was implemented and why, based on `documentation/requirements.md` and `documentation/architecture.md`.
 - List important files, modules, and features added or changed.
+- Create a branch for the pull request if it does not already exist
+- Ensure the pull request description is complete and evidence-backed.
 - Summarize verification activities and cite concrete test evidence from `documentation/verification-report.md`.
 - Document known limitations, out-of-scope items, and technical debt.
 - Provide a concise reviewer checklist.
-- Ensure the pull request includes the required labels: `ai-generated`, `github-copilot`, and `sdlc-framework`.
+- Ensure the pull request includes the required labels: `ai-generated`, `github-copilot`.
 - Refuse to mark a PR ready if verification did not pass or blocking review findings are unresolved — report the blocker instead.
 
 ## Inputs
