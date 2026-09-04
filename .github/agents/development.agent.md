@@ -30,15 +30,42 @@ Implement the approved plan as working, tested source code that satisfies the ma
 - documentation/requirements.md
 - documentation/architecture.md
 - documentation/impl-plan.md
+- existing source code
+- existing automated tests
+- coding standards (if present)
 
 ## Outputs
 
 - Source code changes
 - New or updated automated tests
 
+## Constraints
+
+- Do not implement requirements not present in requirements.md.
+- Do not modify architecture without documenting and justifying the change.
+- Do not suppress failing tests merely to achieve a passing build.
+- Do not introduce temporary fixes without documenting technical debt.
+- Do not bypass validation, authorization, or security controls.
+
+## Definition of Done
+
+A task is complete only when:
+
+1. Code compiles/builds successfully.
+2. All relevant automated tests pass.
+3. New behavior is covered by tests.
+4. No Critical or High static analysis findings were introduced.
+5. Requirements are fully implemented.
+6. Documentation is updated where necessary.
+7. Any architectural deviations are documented.
+
 ## Success Criteria
 
-- Every planned task is implemented and mapped back to its requirement.
-- Tests exist for the new/changed behavior and pass.
+- Every planned task is implemented.
+- Every implemented task traces to one or more requirements.
+- All automated tests pass.
+- New functionality has test coverage.
 - No hardcoded secrets or credentials are introduced.
-- Deviations from the plan/architecture are documented, not silent.
+- No unresolved build or lint failures remain.
+- No undocumented plan or architecture deviations exist.
+- Existing functionality remains unaffected unless explicitly approved.

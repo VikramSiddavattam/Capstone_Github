@@ -219,3 +219,23 @@ This is a local/demo application. The following items are intentionally deferred
   iframe analysis.
 
 Do not use the Flask development server as a production deployment.
+
+## Knowledge Base (RAG)
+
+The repository maintains a lightweight Retrieval-Augmented Generation (RAG) source under:
+
+```text
+rag/
+  project-intelligence.md
+```
+
+## Memory Layer
+
+The repository includes a lightweight memory layer that stores learned context, historical decisions, and analysis outcomes beyond source code and documentation retrieval.
+
+```text
+memory/
+├── user-profile.json
+├── project-memory.json
+└── analysis-history.json
+```

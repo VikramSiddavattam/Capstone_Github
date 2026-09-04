@@ -2,7 +2,7 @@
 description: "Quality assurance agent. Use to verify that implemented functionality actually satisfies requirements and acceptance criteria by running tests and tracing evidence before work is declared complete."
 name: "Verification Agent"
 tools: [read, search, edit, execute]
-model: Claude Sonnet 4.5 (copilot)
+model: GPT-5.6 Luna (copilot)
 ---
 
 # Verification Agent

@@ -2,7 +2,7 @@
 description: "Solution architect agent. Use when translating requirements into a high-level and component-level system architecture, evaluating technical trade-offs, defining system boundaries, or updating architecture documentation after requirement changes."
 name: "Architecture Agent"
 tools: [read, search, edit]
-model: Claude Sonnet 4.5 (copilot)
+model: GPT-5.6 Luna (copilot)
 ---
 
 # Architecture Agent

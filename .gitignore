@@ -6,3 +6,4 @@ venv/
 .env
 .coverage
 htmlcov/
+.vscode/settings.local.json
