@@ -2,7 +2,7 @@
 name: "Implementation Plan Agent"
 description: "Implementation planning agent. Use when creating a detailed, dependency-ordered implementation plan based on the approved architecture and design review."
 tools: [read, search, edit]
-model: GPT-5 mini (copilot)
+model: GPT-5.6 Luna (copilot)
 ---
 
 # Implementation Plan Agent

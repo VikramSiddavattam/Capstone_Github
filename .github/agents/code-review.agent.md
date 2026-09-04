@@ -2,7 +2,7 @@
 description: "Independent code reviewer. Use after implementation is complete to review source code for correctness, security, maintainability, error handling, and test coverage against requirements."
 name: "Code Review Agent"
 tools: [read, search, edit]
-model: Claude Sonnet 4.5 (copilot)
+model: GPT-5.6 Luna (copilot)
 ---
 
 # Code Review Agent

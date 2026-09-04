@@ -2,7 +2,7 @@
 description: "Independent design reviewer. Use after an architecture proposal exists to validate requirements coverage, surface risks and gaps, and challenge unnecessary complexity before implementation planning begins."
 name: "Design Review Agent"
 tools: [read, search, edit]
-model: Claude Sonnet 4.5 (copilot)
+model: GPT-5.6 Luna (copilot)
 ---
 
 # Design Review Agent

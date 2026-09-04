@@ -41,7 +41,7 @@ No database, authentication layer, queue, background worker, browser renderer, o
 - Excludes statically hidden elements using hidden, ria-hidden="true", display:none, and isibility:hidden cues.
 - Resolves font family, font size, and text color from inline styles, embedded CSS, and directly retrievable linked stylesheets.
 - Detects React, Vue, Angular, Bootstrap, WordPress, and generator metadata on a best-effort basis.
-- Generates one preferred locator per element using id, 
+- Generates one preferred locator per element using id,
 ame, data-testid, XPath, then CSS Selector priority.
 - Prefers unique locators and marks non-unique selected locators as Non-Unique.
 - Renders safe HTML reports with Jinja2 autoescaping and clear empty/error/missing-data states.
@@ -87,6 +87,13 @@ rag/project-intelligence.md    Concise AI retrieval source generated from curren
 - Generate relative XPath before CSS fallback, prioritizing stable attributes, normalized text, axes, and positional fallback only within stable containers.
 - Use Jinja2 autoescaping so analyzed page data is never rendered as trusted HTML.
 - Preserve traceability through SDLC artifacts and Copilot quality-gate hooks.
+
+## SDLC Artifact Index
+- documentation/requirements.md
+- documentation/architecture.md
+- documentation/impl-plan.md
+- documentation/design-review.md
+- documentation/verification-report.md
 
 ## Known Limitations
 
